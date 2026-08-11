@@ -1,0 +1,10 @@
+# Nmap 7.94SVN scan initiated Tue Aug 11 19:53:23 2026 as: nmap -p 3000 --script http-title,http-headers -oN /lab-results/phase2-http-enum.txt juice-shop
+Nmap scan report for juice-shop (172.19.0.2)
+Host is up (0.000055s latency).
+rDNS record for 172.19.0.2: juice-shop.cyber-lab-network
+
+PORT     STATE SERVICE
+3000/tcp open  ppp
+MAC Address: 02:4D:DF:40:D9:2C (Unknown)
+
+# Nmap done at Tue Aug 11 19:53:23 2026 -- 1 IP address (1 host up) scanned in 0.16 seconds

@@ -196,3 +196,66 @@ All security testing documented in this project is performed in a controlled lab
 
 Future stages will expand the lab with additional reconnaissance, vulnerability analysis, web application security testing, monitoring, and defensive security exercises.
 
+
+## Phase 2 – Network Reconnaissance and HTTP Enumeration
+
+### Objective
+The objective of this phase was to perform network reconnaissance and service enumeration against the OWASP Juice Shop application running inside the isolated Docker lab environment.
+
+### Target
+- Application: OWASP Juice Shop
+- Hostname: juice-shop
+- IP Address: 172.19.0.2
+- TCP Port: 3000
+- Environment: Isolated Docker network
+
+### Reconnaissance
+
+A full TCP port scan was performed using Nmap to identify exposed services.
+
+The scan identified TCP port 3000 as the only open port on the target container.
+
+Further service detection was performed using Nmap. Although Nmap initially classified the service as `ppp?`, examination of the returned service fingerprint revealed HTTP responses and OWASP Juice Shop HTML content.
+
+### HTTP Enumeration
+
+Direct HTTP inspection was performed using curl.
+
+The application returned HTTP headers including:
+
+- Content-Type: text/html; charset=UTF-8
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
+
+HTML inspection confirmed the application identity through the page title:
+
+`OWASP Juice Shop`
+
+### Evidence Collected
+
+Evidence generated during this phase is stored in the `evidence/` directory:
+
+- phase2-full-port-scan.txt
+- phase2-service-detection.txt
+- phase2-http-enum.txt
+- phase2-http-detailed.txt
+- phase2-http-headers.txt
+- phase2-http-sample.txt
+
+### Skills Demonstrated
+
+- Network reconnaissance
+- TCP port scanning
+- Nmap service enumeration
+- HTTP protocol analysis
+- Linux command-line administration
+- Docker networking
+- Security evidence collection
+- Technical troubleshooting
+- Cybersecurity documentation
+
+### Phase 2 Result
+
+The reconnaissance process successfully identified the OWASP Juice Shop attack surface and confirmed that the application was accessible as an HTTP web service over TCP port 3000.
+
+All testing was performed against an intentionally vulnerable application inside an isolated lab environment.

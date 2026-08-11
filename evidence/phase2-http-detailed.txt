@@ -1,0 +1,81 @@
+# Nmap 7.94SVN scan initiated Tue Aug 11 19:55:23 2026 as: nmap -p 3000 -sV --script http-title,http-headers --script-args http.host=juice-shop -oN /lab-results/phase2-http-detailed.txt juice-shop
+Nmap scan report for juice-shop (172.19.0.2)
+Host is up (0.000044s latency).
+rDNS record for 172.19.0.2: juice-shop.cyber-lab-network
+
+PORT     STATE SERVICE VERSION
+3000/tcp open  ppp?
+| fingerprint-strings: 
+|   GetRequest: 
+|     HTTP/1.1 200 OK
+|     Access-Control-Allow-Origin: *
+|     X-Content-Type-Options: nosniff
+|     X-Frame-Options: SAMEORIGIN
+|     Feature-Policy: payment 'self'
+|     X-Recruiting: /#/jobs
+|     Accept-Ranges: bytes
+|     Cache-Control: public, max-age=0
+|     Last-Modified: Tue, 11 Aug 2026 17:35:38 GMT
+|     ETag: W/"24b1-19ff1e4e86e"
+|     Content-Type: text/html; charset=UTF-8
+|     Content-Length: 9393
+|     Vary: Accept-Encoding
+|     Date: Tue, 11 Aug 2026 19:55:34 GMT
+|     Connection: close
+|     <!--
+|     Copyright (c) 2014-2026 Bjoern Kimminich & the OWASP Juice Shop contributors.
+|     SPDX-License-Identifier: MIT
+|     <!doctype html>
+|     <html lang="en" data-beasties-container>
+|     <head>
+|     <meta charset="utf-8">
+|     <title>OWASP Juice Shop</title>
+|     <meta name="description" content="Probably the most modern and sophisticated insecure web application">
+|     <meta name="viewport" content="width=device-width, initial-scale=1">
+|     <link rel="preconnect" href="htt
+|   HTTPOptions, RTSPRequest: 
+|     HTTP/1.1 204 No Content
+|     Access-Control-Allow-Origin: *
+|     Access-Control-Allow-Methods: GET,HEAD,PUT,PATCH,POST,DELETE
+|     Vary: Access-Control-Request-Headers
+|     Content-Length: 0
+|     Date: Tue, 11 Aug 2026 19:55:34 GMT
+|     Connection: close
+|   Help, NCP: 
+|     HTTP/1.1 400 Bad Request
+|_    Connection: close
+1 service unrecognized despite returning data. If you know the service/version, please submit the following fingerprint at https://nmap.org/cgi-bin/submit.cgi?new-service :
+SF-Port3000-TCP:V=7.94SVN%I=7%D=8/11%Time=6A7B7E36%P=x86_64-pc-linux-gnu%r
+SF:(GetRequest,2668,"HTTP/1\.1\x20200\x20OK\r\nAccess-Control-Allow-Origin
+SF::\x20\*\r\nX-Content-Type-Options:\x20nosniff\r\nX-Frame-Options:\x20SA
+SF:MEORIGIN\r\nFeature-Policy:\x20payment\x20'self'\r\nX-Recruiting:\x20/#
+SF:/jobs\r\nAccept-Ranges:\x20bytes\r\nCache-Control:\x20public,\x20max-ag
+SF:e=0\r\nLast-Modified:\x20Tue,\x2011\x20Aug\x202026\x2017:35:38\x20GMT\r
+SF:\nETag:\x20W/\"24b1-19ff1e4e86e\"\r\nContent-Type:\x20text/html;\x20cha
+SF:rset=UTF-8\r\nContent-Length:\x209393\r\nVary:\x20Accept-Encoding\r\nDa
+SF:te:\x20Tue,\x2011\x20Aug\x202026\x2019:55:34\x20GMT\r\nConnection:\x20c
+SF:lose\r\n\r\n<!--\n\x20\x20~\x20Copyright\x20\(c\)\x202014-2026\x20Bjoer
+SF:n\x20Kimminich\x20&\x20the\x20OWASP\x20Juice\x20Shop\x20contributors\.\
+SF:n\x20\x20~\x20SPDX-License-Identifier:\x20MIT\n\x20\x20-->\n\n<!doctype
+SF:\x20html>\n<html\x20lang=\"en\"\x20data-beasties-container>\n<head>\n\x
+SF:20\x20<meta\x20charset=\"utf-8\">\n\x20\x20<title>OWASP\x20Juice\x20Sho
+SF:p</title>\n\x20\x20<meta\x20name=\"description\"\x20content=\"Probably\
+SF:x20the\x20most\x20modern\x20and\x20sophisticated\x20insecure\x20web\x20
+SF:application\">\n\x20\x20<meta\x20name=\"viewport\"\x20content=\"width=d
+SF:evice-width,\x20initial-scale=1\">\n\x20\x20<link\x20rel=\"preconnect\"
+SF:\x20href=\"htt")%r(Help,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\r\nConne
+SF:ction:\x20close\r\n\r\n")%r(NCP,2F,"HTTP/1\.1\x20400\x20Bad\x20Request\
+SF:r\nConnection:\x20close\r\n\r\n")%r(HTTPOptions,EA,"HTTP/1\.1\x20204\x2
+SF:0No\x20Content\r\nAccess-Control-Allow-Origin:\x20\*\r\nAccess-Control-
+SF:Allow-Methods:\x20GET,HEAD,PUT,PATCH,POST,DELETE\r\nVary:\x20Access-Con
+SF:trol-Request-Headers\r\nContent-Length:\x200\r\nDate:\x20Tue,\x2011\x20
+SF:Aug\x202026\x2019:55:34\x20GMT\r\nConnection:\x20close\r\n\r\n")%r(RTSP
+SF:Request,EA,"HTTP/1\.1\x20204\x20No\x20Content\r\nAccess-Control-Allow-O
+SF:rigin:\x20\*\r\nAccess-Control-Allow-Methods:\x20GET,HEAD,PUT,PATCH,POS
+SF:T,DELETE\r\nVary:\x20Access-Control-Request-Headers\r\nContent-Length:\
+SF:x200\r\nDate:\x20Tue,\x2011\x20Aug\x202026\x2019:55:34\x20GMT\r\nConnec
+SF:tion:\x20close\r\n\r\n");
+MAC Address: 02:4D:DF:40:D9:2C (Unknown)
+
+Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
+# Nmap done at Tue Aug 11 19:55:34 2026 -- 1 IP address (1 host up) scanned in 11.28 seconds
