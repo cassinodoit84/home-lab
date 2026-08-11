@@ -259,3 +259,59 @@ Evidence generated during this phase is stored in the `evidence/` directory:
 The reconnaissance process successfully identified the OWASP Juice Shop attack surface and confirmed that the application was accessible as an HTTP web service over TCP port 3000.
 
 All testing was performed against an intentionally vulnerable application inside an isolated lab environment.
+
+
+## Phase 3 – Web Application Enumeration
+
+Phase 3 focused on deeper enumeration of the OWASP Juice Shop application using multiple web reconnaissance tools.
+
+### Tools Used
+- WhatWeb
+- Nikto
+- Gobuster
+- DIRB wordlists
+- Docker
+
+### WhatWeb Technology Fingerprinting
+WhatWeb was used to fingerprint the web application and inspect HTTP technologies and headers.
+
+Notable observations:
+- HTTP 200 response confirmed
+- X-Frame-Options: SAMEORIGIN
+- X-Content-Type-Options: nosniff
+- Access-Control-Allow-Origin: *
+- Feature-Policy header detected
+- Application-specific headers were identified
+
+### Nikto Web Server Scan
+Nikto was used to identify potentially interesting files, directories, headers, and server configuration information.
+
+Findings included:
+- `/ftp/` identified as an accessible path
+- `/public/` identified as potentially interesting
+- `robots.txt` discovered
+- Multiple HTTP methods advertised
+- Several uncommon HTTP headers identified
+
+### Gobuster Directory Enumeration
+Gobuster was used with the DIRB common wordlist to discover hidden or undocumented application paths.
+
+Interesting paths included:
+- `/ftp` – HTTP 200
+- `/promotion` – HTTP 200
+- `/robots.txt` – HTTP 200
+- `/video` – HTTP 200
+- `/assets` – HTTP 301
+- `/media` – HTTP 301
+- Several additional endpoints returned HTTP 500 responses
+
+### Security Analysis
+The enumeration demonstrates how publicly accessible application metadata and directory structures can increase the attack surface of a web application. Discovering endpoints such as `/ftp`, examining `robots.txt`, and identifying application technologies can provide valuable information during an authorized security assessment.
+
+All testing was performed against OWASP Juice Shop running locally in an isolated Docker home-lab environment.
+
+### Evidence
+Raw outputs from the Phase 3 scans are stored in the `evidence/` directory:
+- `phase3-whatweb.txt`
+- `phase3-nikto.txt`
+- `phase3-gobuster.txt`
