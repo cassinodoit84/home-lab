@@ -1,317 +1,225 @@
-\# Cybersecurity Home Lab – Docker Network \& OWASP Juice Shop
+🛡️ Cybersecurity Home Lab
 
+Vulnerability Assessment • Web Security • Docker • NGINX • Security Hardening
 
+A hands-on defensive cybersecurity project documenting the process of building an isolated lab, discovering an application’s attack surface, analyzing security weaknesses, implementing compensating controls, troubleshooting their impact, and verifying remediation.
 
-\## Project Overview
+Project workflow: Discovery → Enumeration → Vulnerability Analysis → Risk Assessment → Remediation → Verification → Documentation
 
+🎯 Project Objective
 
+The goal of this project is to develop practical cybersecurity skills through repeatable, evidence-based security testing against systems I own and control.
 
-This project documents the development of a containerized cybersecurity home lab designed for hands-on practice with networking, reconnaissance, service enumeration, vulnerability assessment, and security testing.
+The lab uses OWASP Juice Shop as an intentionally vulnerable target and Docker to provide an isolated environment. Later phases introduce an NGINX reverse proxy as a defensive security layer.
 
+All testing documented here is performed locally for educational and authorized security training.
 
 
-The lab uses Docker to create an isolated network containing an intentionally vulnerable OWASP Juice Shop web application and a separate Ubuntu-based security workstation.
+🏗️ Lab Architecture
 
+                    Windows Host
+                         |
+             +-----------+-----------+
+             |                       |
+        PowerShell / Browser     Docker Desktop
+                                     |
+                            Isolated Lab Network
+                                     |
+                      +--------------+--------------+
+                      |                             |
+               Security Tooling              OWASP Juice Shop
+                Nmap / cURL                    Target :3000
+                                                    |
+                                             NGINX Reverse Proxy
+                                              Hardened :8080
 
+The original application is tested on port 3000. During the remediation phase, traffic is routed through NGINX on port 8080, where additional defensive HTTP controls are applied.
 
-The objective is to simulate a small cybersecurity testing environment where security tools can be used safely against systems that I own and control.
 
+🔬 Project Phases
 
+Phase	Focus	Key Work	Status
+1	Lab Deployment	Docker environment, Juice Shop target, isolated networking	✅ Complete
+2	Network Reconnaissance	Nmap scanning, service detection, HTTP validation	✅ Complete
+3	Web Enumeration	WhatWeb, Nikto, Gobuster, endpoint discovery	✅ Complete
+4	Vulnerability Analysis	Finding validation, risk analysis, OWASP mapping	✅ Complete
+5	Remediation & Hardening	NGINX reverse proxy, CSP and security headers, validation	✅ Complete
+6	Security Verification	Before/after validation and remediation verification	🚧 In Progress
 
-\## Lab Objectives
 
+🔎 Phase 2 — Network Reconnaissance
 
+Network reconnaissance was performed against the Juice Shop container using Nmap and cURL.
 
-\- Build an isolated cybersecurity lab using Docker.
+nmap -sV -p 3000 172.19.0.2
 
-\- Deploy OWASP Juice Shop as an intentionally vulnerable target.
+The assessment confirmed that the target was reachable and that TCP port 3000 exposed the web application.
 
-\- Configure a separate Ubuntu container as a security workstation.
+HTTP inspection was then used to validate the service rather than relying only on automated scanner identification.
 
-\- Understand Docker networking and container-to-container communication.
+Skills demonstrated: Nmap • TCP/IP • Service Enumeration • HTTP Analysis • Evidence Collection
 
-\- Perform network reconnaissance using Nmap.
 
-\- Identify open ports and exposed services.
+🌐 Phase 3 — Web Application Enumeration
 
-\- Analyze HTTP responses and security headers.
+The application was enumerated using multiple tools to identify technologies, exposed paths, HTTP behavior, and potential attack-surface information.
 
-\- Collect and document security-testing evidence.
+Tools Used
 
-\- Practice troubleshooting and interpreting scanner results.
+* WhatWeb
+* Nikto
+* Gobuster
+* DIRB wordlists
+* cURL
 
+Interesting paths discovered during the authorized assessment included:
 
+* /ftp
+* /promotion
+* /robots.txt
+* /video
+* /assets
+* /media
 
-\## Technologies \& Tools
+This phase demonstrated why reconnaissance results from different tools should be correlated and manually interpreted.
 
 
+⚠️ Phase 4 — Vulnerability Analysis & OWASP Mapping
 
-\- Docker Desktop
+Enumeration results were moved into a structured vulnerability-management workflow.
 
-\- Docker Bridge Networking
+A validated finding documented application configuration information exposure through an administrative configuration endpoint.
 
-\- Ubuntu 24.04
+The issue was assessed for security impact and mapped to:
 
-\- OWASP Juice Shop
+OWASP A05:2021 — Security Misconfiguration
 
-\- Nmap
+The analysis included:
 
-\- cURL
+* Finding description
+* Technical evidence
+* Security impact
+* Severity assessment
+* OWASP mapping
+* Remediation recommendations
+* Validation scope
 
-\- Windows PowerShell
+📄 Read the Phase 4 Vulnerability Analysis
 
-\- Git \& GitHub
 
+🔐 Phase 5 — Remediation & Security Hardening
 
+Phase 5 moved from identifying weaknesses to implementing defensive controls.
 
-\## Lab Architecture
+Rather than modifying the Juice Shop source code, I deployed an NGINX reverse proxy in front of the application.
 
+Browser → NGINX :8080 → OWASP Juice Shop :3000
 
+Security Controls Implemented
 
-The environment currently consists of two Docker containers connected to an isolated Docker bridge network.
+* Content-Security-Policy
+* Referrer-Policy
+* Permissions-Policy
+* X-Content-Type-Options: nosniff
+* X-Frame-Options: SAMEORIGIN
 
+The initial Content Security Policy was restrictive enough to affect the application’s interface.
 
+I reviewed the policy, adjusted it to support required application resources, reloaded NGINX, and retested the application.
 
-&#x20;   Windows Host
+This demonstrated an important security-engineering principle:
 
-&#x20;        |
+A security control must reduce risk while preserving required business and application functionality.
 
-&#x20;        |-- Browser --> localhost:3000
+📄 Read the Complete Phase 5 Remediation & Hardening Lab
 
-&#x20;        |
 
-&#x20;        +-- Docker Desktop
+📸 Phase 5 Evidence
 
-&#x20;              |
+Hardened Application
 
-&#x20;        cyber-lab-network
+OWASP Juice Shop functioning through the NGINX reverse proxy on port 8080 after CSP troubleshooting.
 
-&#x20;              |
+Security Header Verification
 
-&#x20;         +----+----+
+PowerShell and cURL verification showing the hardened endpoint returning HTTP 200 and the additional security headers.
 
-&#x20;         |         |
 
-&#x20;   security-tools  juice-shop
+📊 Before vs. After
 
-&#x20;     Ubuntu         OWASP
+Security Control	Baseline :3000	Hardened :8080
+X-Content-Type-Options	✅ Present	✅ Present
+X-Frame-Options	✅ Present	✅ Present
+Content-Security-Policy	❌ Not identified	✅ Added
+Referrer-Policy	❌ Not identified	✅ Added
+Permissions-Policy	❌ Not identified	✅ Added
+Application Functional	✅	✅ After CSP adjustment
 
-&#x20;         |           |
+The result demonstrates a complete defensive workflow rather than simply running vulnerability scanners:
 
-&#x20;         +-----> 172.19.0.2:3000
+Identify → Analyze → Remediate → Troubleshoot → Verify
 
 
+🛠️ Tools & Technologies
 
-The `security-tools` container is used for reconnaissance and security testing.
+Area	Technologies
+Containerization	Docker Desktop, Docker Networking
+Target Application	OWASP Juice Shop
+Reconnaissance	Nmap, WhatWeb, Nikto, Gobuster
+HTTP Analysis	cURL, PowerShell
+Defensive Control	NGINX Reverse Proxy
+Systems	Windows, Ubuntu/Linux
+Documentation	Git, GitHub, Markdown
 
 
+🧠 Skills Demonstrated
 
-The `juice-shop` container acts as the intentionally vulnerable target.
+* Vulnerability assessment and management
+* Network reconnaissance and service enumeration
+* Web application security assessment
+* HTTP security-header analysis
+* OWASP Top 10 mapping
+* Risk assessment and remediation planning
+* NGINX reverse-proxy configuration
+* Content Security Policy implementation
+* Security-control troubleshooting
+* Remediation verification
+* Docker container management
+* Linux and PowerShell command-line work
+* Technical documentation and evidence management
 
 
+📁 Repository Structure
 
-\## Initial Reconnaissance
+home-lab/
+├── docs/          # Vulnerability analysis and remediation reports
+├── evidence/      # Raw command and scanner output
+├── screenshots/   # Visual evidence from lab phases
+├── nginx/         # Reverse-proxy hardening configuration
+└── README.md      # Project case study
 
+This structure separates raw evidence from analysis and final documentation, making the project easier to review as a cybersecurity portfolio case study.
 
 
-After confirming connectivity between the containers, I performed service enumeration against the Juice Shop target using Nmap.
+🚧 Next Phase
 
+Phase 6 — Security Verification
 
+The next phase will formally compare the baseline and hardened environments, verify that the implemented controls remain active, validate application functionality, and document the final remediation outcome with repeatable evidence.
 
-Command:
 
+⚖️ Ethical Use
 
+All security testing in this repository is performed against an intentionally vulnerable application deployed inside a controlled local lab environment.
 
-&#x20;   nmap -sV -p 3000 172.19.0.2
+No external or production systems are tested.
 
+Security-testing techniques should only be used against systems you own or have explicit authorization to assess.
 
 
-The scan confirmed that:
+👤 Author
 
+Cosmos Akpan
+Cybersecurity Student • Blue Team • SOC • Network Security
 
-
-\- The target host was reachable.
-
-\- TCP port 3000 was open.
-
-\- The service returned HTTP application data.
-
-\- Nmap could not confidently identify the service using its default fingerprint.
-
-
-
-This demonstrated an important security-analysis principle: automated scanner results should be validated rather than accepted without interpretation.
-
-
-
-The complete scan output is stored in:
-
-
-
-&#x20;   evidence/juice-shop-nmap.txt
-
-
-
-\## Skills Demonstrated
-
-
-
-\- Docker container deployment
-
-\- Network isolation
-
-\- Linux command-line administration
-
-\- TCP/IP networking
-
-\- Network reconnaissance
-
-\- Nmap service enumeration
-
-\- HTTP analysis
-
-\- Security evidence collection
-
-\- Technical troubleshooting
-
-\- Cybersecurity documentation
-
-
-
-\## Ethical Use
-
-
-
-All security testing documented in this project is performed in a controlled lab environment against systems intentionally deployed for security training. The techniques demonstrated here should only be used against systems you own or have explicit authorization to test.
-
-
-
-\## Project Status
-
-
-
-🚧 Work in Progress
-
-
-
-Future stages will expand the lab with additional reconnaissance, vulnerability analysis, web application security testing, monitoring, and defensive security exercises.
-
-
-## Phase 2 – Network Reconnaissance and HTTP Enumeration
-
-### Objective
-The objective of this phase was to perform network reconnaissance and service enumeration against the OWASP Juice Shop application running inside the isolated Docker lab environment.
-
-### Target
-- Application: OWASP Juice Shop
-- Hostname: juice-shop
-- IP Address: 172.19.0.2
-- TCP Port: 3000
-- Environment: Isolated Docker network
-
-### Reconnaissance
-
-A full TCP port scan was performed using Nmap to identify exposed services.
-
-The scan identified TCP port 3000 as the only open port on the target container.
-
-Further service detection was performed using Nmap. Although Nmap initially classified the service as `ppp?`, examination of the returned service fingerprint revealed HTTP responses and OWASP Juice Shop HTML content.
-
-### HTTP Enumeration
-
-Direct HTTP inspection was performed using curl.
-
-The application returned HTTP headers including:
-
-- Content-Type: text/html; charset=UTF-8
-- X-Content-Type-Options: nosniff
-- X-Frame-Options: SAMEORIGIN
-
-HTML inspection confirmed the application identity through the page title:
-
-`OWASP Juice Shop`
-
-### Evidence Collected
-
-Evidence generated during this phase is stored in the `evidence/` directory:
-
-- phase2-full-port-scan.txt
-- phase2-service-detection.txt
-- phase2-http-enum.txt
-- phase2-http-detailed.txt
-- phase2-http-headers.txt
-- phase2-http-sample.txt
-
-### Skills Demonstrated
-
-- Network reconnaissance
-- TCP port scanning
-- Nmap service enumeration
-- HTTP protocol analysis
-- Linux command-line administration
-- Docker networking
-- Security evidence collection
-- Technical troubleshooting
-- Cybersecurity documentation
-
-### Phase 2 Result
-
-The reconnaissance process successfully identified the OWASP Juice Shop attack surface and confirmed that the application was accessible as an HTTP web service over TCP port 3000.
-
-All testing was performed against an intentionally vulnerable application inside an isolated lab environment.
-
-
-## Phase 3 – Web Application Enumeration
-
-Phase 3 focused on deeper enumeration of the OWASP Juice Shop application using multiple web reconnaissance tools.
-
-### Tools Used
-- WhatWeb
-- Nikto
-- Gobuster
-- DIRB wordlists
-- Docker
-
-### WhatWeb Technology Fingerprinting
-WhatWeb was used to fingerprint the web application and inspect HTTP technologies and headers.
-
-Notable observations:
-- HTTP 200 response confirmed
-- X-Frame-Options: SAMEORIGIN
-- X-Content-Type-Options: nosniff
-- Access-Control-Allow-Origin: *
-- Feature-Policy header detected
-- Application-specific headers were identified
-
-### Nikto Web Server Scan
-Nikto was used to identify potentially interesting files, directories, headers, and server configuration information.
-
-Findings included:
-- `/ftp/` identified as an accessible path
-- `/public/` identified as potentially interesting
-- `robots.txt` discovered
-- Multiple HTTP methods advertised
-- Several uncommon HTTP headers identified
-
-### Gobuster Directory Enumeration
-Gobuster was used with the DIRB common wordlist to discover hidden or undocumented application paths.
-
-Interesting paths included:
-- `/ftp` – HTTP 200
-- `/promotion` – HTTP 200
-- `/robots.txt` – HTTP 200
-- `/video` – HTTP 200
-- `/assets` – HTTP 301
-- `/media` – HTTP 301
-- Several additional endpoints returned HTTP 500 responses
-
-### Security Analysis
-The enumeration demonstrates how publicly accessible application metadata and directory structures can increase the attack surface of a web application. Discovering endpoints such as `/ftp`, examining `robots.txt`, and identifying application technologies can provide valuable information during an authorized security assessment.
-
-All testing was performed against OWASP Juice Shop running locally in an isolated Docker home-lab environment.
-
-### Evidence
-Raw outputs from the Phase 3 scans are stored in the `evidence/` directory:
-- `phase3-whatweb.txt`
-- `phase3-nikto.txt`
-- `phase3-gobuster.txt`
+This repository is part of my hands-on cybersecurity portfolio and documents my progression from security discovery through defensive remediation and verification.
