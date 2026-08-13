@@ -1,182 +1,218 @@
-# Phase 5 – Remediation and Security Hardening
-
-
+# Phase 5 – Remediation and Security Hardening Lab
 
 ## Objective
 
+The objective of Phase 5 was to move beyond vulnerability identification and implement defensive security controls against the HTTP security-header weaknesses identified during Phase 4.
 
+Rather than modifying the OWASP Juice Shop source code, an NGINX reverse proxy was deployed as a security layer in front of the application.
 
-The objective of this phase is to develop remediation recommendations for the security finding identified during Phase 4 of the cybersecurity home lab.
+This demonstrated how compensating security controls can be implemented at the web infrastructure layer.
 
+---
 
+## Lab Environment
 
-The goal is not only to identify a potential weakness, but also to demonstrate how security professionals evaluate risk, recommend defensive controls, and verify that remediation has been implemented correctly.
+The lab was performed in an isolated local environment.
 
+Technologies used:
 
+- Docker Desktop
+- OWASP Juice Shop
+- NGINX
+- Windows PowerShell
+- curl
+- Git
+- GitHub
 
-## Finding Reviewed
+OWASP Juice Shop was running locally on:
 
+`http://localhost:3000`
 
+The hardened NGINX endpoint was configured on:
 
-During Phase 4, HTTP response headers from the locally hosted OWASP Juice Shop environment were reviewed.
+`http://localhost:8080`
 
+No external or production systems were tested.
 
+---
 
-The assessment identified opportunities to improve HTTP security header configuration.
+## Phase 4 Baseline
 
+HTTP response headers from the original Juice Shop application were inspected using curl.
 
+Command used:
 
-## Security Risk
+`curl.exe -I http://localhost:3000`
 
+A targeted header inspection was also performed.
 
+The baseline assessment confirmed the presence of:
 
-Missing or improperly configured HTTP security headers can reduce the browser's ability to protect users from certain web-based attacks.
+- X-Content-Type-Options: nosniff
+- X-Frame-Options: SAMEORIGIN
 
+The targeted assessment did not identify the following headers:
 
+- Content-Security-Policy
+- Referrer-Policy
+- Permissions-Policy
 
-Depending on the affected header and application configuration, potential risks may include:
+These results provided the baseline for the Phase 5 remediation lab.
 
+---
 
+## Remediation Strategy
 
-- Cross-site scripting (XSS)
+An NGINX reverse proxy was deployed between the browser and OWASP Juice Shop.
 
-- Clickjacking
+Architecture:
 
-- Content injection
+Browser → NGINX Reverse Proxy :8080 → OWASP Juice Shop :3000
 
-- MIME-type interpretation issues
+The reverse proxy was configured to add additional HTTP security controls without modifying the Juice Shop application itself.
 
-- Unauthorized loading of external resources
+---
 
+## Security Controls Implemented
 
+### Content Security Policy
 
-## Recommended Remediation
+A Content-Security-Policy header was introduced to restrict the sources from which browser resources may be loaded.
 
+The policy also included the `frame-ancestors` directive to provide additional protection against unauthorized framing.
 
+### Referrer Policy
 
-The following defensive controls should be considered:
+The following policy was implemented:
 
+`Referrer-Policy: strict-origin-when-cross-origin`
 
+This limits the amount of referrer information transmitted during cross-origin requests.
 
-### 1. Content Security Policy
+### Permissions Policy
 
+The following browser capabilities were restricted:
 
+- Camera
+- Microphone
+- Geolocation
 
-Implement a restrictive Content-Security-Policy (CSP) that defines trusted sources from which scripts, styles, images, and other resources may be loaded.
+Configuration:
 
+`Permissions-Policy: camera=(), microphone=(), geolocation=()`
 
+### MIME-Type Protection
 
-### 2. Clickjacking Protection
-
-
-
-Use the Content-Security-Policy `frame-ancestors` directive to restrict unauthorized websites from embedding the application.
-
-
-
-### 3. MIME-Type Protection
-
-
-
-Configure:
-
-
+The deployment retained:
 
 `X-Content-Type-Options: nosniff`
 
+This helps prevent MIME-type sniffing.
 
+### Frame Protection
 
-This helps prevent browsers from interpreting files as a different MIME type than declared by the server.
+The deployment retained:
 
+`X-Frame-Options: SAMEORIGIN`
 
+This restricts framing of the application by external origins.
 
-### 4. Referrer Policy
+---
 
+## Troubleshooting and CSP Adjustment
 
+The initial Content Security Policy was intentionally restrictive.
 
-Implement an appropriate `Referrer-Policy` to limit the amount of potentially sensitive URL information transmitted to external websites.
+After the first implementation, OWASP Juice Shop loaded through NGINX but the application's normal styling and interface did not render correctly.
 
+This demonstrated an important security engineering principle:
 
+Security controls must improve security without unnecessarily breaking required application functionality.
 
-### 5. Permissions Policy
+The CSP was reviewed and adjusted to support the resources required by the application.
 
+The NGINX configuration was validated and reloaded.
 
+After the adjustment, OWASP Juice Shop rendered correctly through:
 
-Configure `Permissions-Policy` to restrict unnecessary browser capabilities such as camera, microphone, and geolocation access.
+`http://localhost:8080`
 
+This confirmed that application functionality had been restored while the additional security headers remained active.
 
+The compatibility-oriented CSP used in this educational lab is not presented as a final production policy. A production CSP should be tightened iteratively based on the application's actual resource requirements.
 
-## Defense-in-Depth
-
-
-
-Security headers should not be treated as the application's only security control.
-
-
-
-They should complement:
-
-
-
-- Secure application development
-
-- Input validation
-
-- Output encoding
-
-- Authentication and authorization controls
-
-- Patch management
-
-- Secure server configuration
-
-- Logging and monitoring
-
-- Regular vulnerability assessments
-
-
+---
 
 ## Verification
 
+The hardened endpoint was tested using:
 
+`curl.exe -I http://localhost:8080`
 
-After remediation, HTTP responses should be reviewed again to confirm that the recommended security headers are present and configured correctly.
+The application returned:
 
+`HTTP/1.1 200 OK`
 
+The final response contained:
 
-The results should then be compared with the original Phase 4 evidence.
+- Content-Security-Policy
+- Referrer-Policy
+- Permissions-Policy
+- X-Content-Type-Options
+- X-Frame-Options
 
+Both Docker containers were also confirmed to be operational.
 
+The Juice Shop application remained accessible through the NGINX reverse proxy after the CSP adjustment.
 
-## Lab Scope
+---
 
+## Evidence
 
+### Hardened Application
 
-This assessment was conducted in an isolated local Docker environment running OWASP Juice Shop for authorized educational cybersecurity practice.
+![Hardened Juice Shop Application](../screenshots/phase-5-02-hardened-application.png)
 
+This screenshot demonstrates OWASP Juice Shop functioning through the NGINX reverse proxy on port 8080.
 
+### Security Header Verification
 
-No external production systems were tested.
+![Security Header Verification](../screenshots/phase-5-03-hardening-verification.png)
 
+This screenshot demonstrates the HTTP 200 response and security headers present after the hardening configuration was applied.
 
+---
+
+## Results
+
+Phase 5 successfully demonstrated a complete remediation workflow:
+
+Finding → Baseline → Remediation → Functional Testing → Troubleshooting → Adjustment → Verification
+
+The lab showed that identifying a security weakness is only the beginning of vulnerability management.
+
+Security professionals must also implement controls, verify their effectiveness, evaluate their impact on application functionality, and document the final result.
+
+---
 
 ## Skills Demonstrated
 
+- Web application security hardening
+- NGINX reverse proxy configuration
+- Docker container management
+- HTTP security-header analysis
+- Content Security Policy implementation
+- Security troubleshooting
+- Remediation validation
+- PowerShell and curl
+- Vulnerability management
+- Technical documentation
+- Git and GitHub evidence management
 
+---
 
-- Web application security assessment
+## Key Takeaway
 
-- HTTP security header analysis
+Effective remediation requires balancing security and functionality.
 
-- Vulnerability documentation
-
-- Risk assessment
-
-- Security remediation planning
-
-- Defense-in-depth
-
-- OWASP security concepts
-
-- Technical reporting
-
+This lab demonstrated how defensive controls can be introduced at the infrastructure layer, tested against an existing application, adjusted when compatibility issues occur, and validated using repeatable technical evidence.
